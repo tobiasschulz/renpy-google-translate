@@ -31,7 +31,7 @@ namespace RenpyTranslate
 				{
 					var nextLine = lines[i + 1].TrimEnd();
 
-					if (nextLine.EndsWith("\"\""))
+					if (nextLine.EndsWith(" \"\""))
 					{
 						result.Add(line);
 						try
@@ -74,7 +74,7 @@ namespace RenpyTranslate
 				{
 					var nextLine = lines[i + 1].TrimEnd();
 
-					if (line.TrimStart().StartsWith("new") && nextLine.EndsWith("\"\""))
+					if (line.TrimStart().StartsWith("new") && nextLine.EndsWith(" \"\""))
 					{
 						result.Add(line);
 						try
