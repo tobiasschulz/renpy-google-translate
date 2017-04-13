@@ -29,14 +29,15 @@ namespace RenpyTranslate
 
 				if (line.TrimStart().StartsWith("# ") && line.EndsWith("\""))
 				{
-					var nextNine = lines[i].TrimEnd();
+					var nextLine = lines[i].TrimEnd();
 
-					if (nextNine.EndsWith("\"\""))
+					if (nextLine.EndsWith("\"\""))
 					{
+						result.Add(line);
 						try
 						{
 							var a = line.Trim();
-							var b = nextNine.Trim();
+							var b = nextLine.Trim();
 							a = a.Remove(a.Length - 1);
 							b = b.Remove(b.Length - 1);
 							if (a.StartsWith("# " + b))
@@ -48,14 +49,13 @@ namespace RenpyTranslate
 							var translated = TranslateString(a);
 
 							Console.WriteLine("en: " + translated);
-							line = nextNine.Remove(nextNine.Length - 1) + translated + "\"";
+							nextLine = nextLine.Replace("\"\"", "\"" + translated + "\"");
 						}
 						catch (Exception ex)
 						{
 							Console.WriteLine(ex);
 						}
-						result.Add(line);
-						saveFunc(string.Join("\n", result));
+						result.Add(nextLine);
 						Console.WriteLine();
 						i++;
 					}
@@ -70,6 +70,7 @@ namespace RenpyTranslate
 
 					if (line.TrimStart().StartsWith("new") && nextLine.EndsWith("\"\""))
 					{
+						result.Add(line);
 						try
 						{
 							var a = line.Trim().Replace("old \"", "").Trim();
@@ -80,14 +81,13 @@ namespace RenpyTranslate
 							Console.WriteLine("ru 2: " + a);
 							var translated = TranslateString(a);
 							Console.WriteLine("en 2: " + translated);
-							line = nextLine.Remove(nextLine.Length - 1) + translated + "\"";
+							nextLine = nextLine.Replace("\"\"", "\"" + translated + "\"");
 						}
 						catch (Exception ex)
 						{
 							Console.WriteLine(ex);
 						}
-						result.Add(line);
-						saveFunc(string.Join("\n", result));
+						result.Add(nextLine);
 						Console.WriteLine();
 						i++;
 					}
@@ -100,6 +100,7 @@ namespace RenpyTranslate
 				{
 					result.Add(line);
 				}
+				saveFunc(string.Join("\n", result));
 			}
 
 			return result;
