@@ -37,7 +37,7 @@ namespace RenpyTranslate
 						try
 						{
 							var a = line.Trim();
-							
+
 							var b = nextLine.Trim();
 							a = a.Remove(a.Length - 1);
 							b = b.Remove(b.Length - 1);
@@ -69,6 +69,14 @@ namespace RenpyTranslate
 					else
 					{
 						result.Add(line);
+
+						if (nextLine.Contains("["))
+						{
+							const string SEP = "XXXXXXXXXXXXXXXXXXX";
+							nextLine = string.Join("", nextLine.Replace("[", SEP + "[").Replace("]", "]" + SEP).Split(new[] { SEP }, StringSplitOptions.None).Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s.ToLower().Replace(" ", "") : s));
+							result.Add(nextLine);
+							i++;
+						}
 					}
 				}
 				else if (line.TrimStart().StartsWith("old") && line.EndsWith("\""))
