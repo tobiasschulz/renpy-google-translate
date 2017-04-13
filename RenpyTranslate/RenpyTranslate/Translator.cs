@@ -29,7 +29,7 @@ namespace RenpyTranslate
 
 				if (line.TrimStart().StartsWith("# ") && line.EndsWith("\""))
 				{
-					var nextLine = lines[i].TrimEnd();
+					var nextLine = lines[i + 1].TrimEnd();
 
 					if (nextLine.EndsWith("\"\""))
 					{
@@ -43,6 +43,12 @@ namespace RenpyTranslate
 							if (a.StartsWith("# " + b))
 							{
 								a = a.Substring(("# " + b).Length);
+							}
+							else
+							{
+								Console.WriteLine("a: " + a);
+								Console.WriteLine("b: " + b);
+								Environment.Exit(0);
 							}
 
 							Console.WriteLine("ru: " + a);
@@ -66,7 +72,7 @@ namespace RenpyTranslate
 				}
 				else if (line.TrimStart().StartsWith("old") && line.EndsWith("\""))
 				{
-					var nextLine = lines[i].TrimEnd();
+					var nextLine = lines[i + 1].TrimEnd();
 
 					if (line.TrimStart().StartsWith("new") && nextLine.EndsWith("\"\""))
 					{
