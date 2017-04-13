@@ -37,6 +37,7 @@ namespace RenpyTranslate
 						try
 						{
 							var a = line.Trim();
+							
 							var b = nextLine.Trim();
 							a = a.Remove(a.Length - 1);
 							b = b.Remove(b.Length - 1);

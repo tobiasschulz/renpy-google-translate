@@ -24,14 +24,14 @@ namespace RenpyTranslate
 
 				Console.WriteLine("Translate file: " + file);
 
-				var originalFile = Path.ChangeExtension(file, ".original" + Path.GetExtension(file));
+				var originalFile = file + ".original"; // Path.ChangeExtension(file, ".original" + Path.GetExtension(file));
 				if (!File.Exists(originalFile))
 				{
 					File.Copy(file, originalFile);
 				}
 
-				var lines = File.ReadAllLines(file);
-				var lines2 = Translator.Run(lines, saveFunc: content => File.WriteAllText(file, content));
+				var lines = File.ReadAllLines(originalFile);
+				Translator.Run(lines, saveFunc: content => File.WriteAllText(file, content));
 			}
 
 
