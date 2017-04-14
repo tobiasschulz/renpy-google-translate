@@ -31,7 +31,7 @@ namespace RenpyTranslate
 				}
 
 				var lines = File.ReadAllLines(originalFile);
-				Translator.Run(lines, saveFunc: content => File.WriteAllText(file, content));
+				Translator.Run(lines, saveFunc: content => File.WriteAllText(file, content), filename: file);
 			}
 
 

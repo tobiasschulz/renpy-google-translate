@@ -19,7 +19,7 @@ namespace RenpyTranslate
 			httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
 		}
 
-		public static List<string> Run(IEnumerable<string> _lines, Action<string> saveFunc)
+		public static List<string> Run(IEnumerable<string> _lines, Action<string> saveFunc, string filename)
 		{
 			var lines = _lines.ToArray();
 			var result = new List<string>();
@@ -75,10 +75,10 @@ namespace RenpyTranslate
 						nextLine = nextLine.Replace("{/ ", "{/");
 						if (nextLine.Contains("{"))
 						{
-							nextLine = regex1.Replace(nextLine, match => match.Captures[0].Value.Replace(" ", ""));
+							nextLine = regex1.Replace(nextLine, match => match.Captures[0].Value.Replace(" ", "").ToLower());
 						}
 						const string SEP = "XXXXXXXXXXXXXXXXXXX";
-						var correctCapitalization = nextLine
+						var correctCapitalization = line
 							.Replace("[", SEP + "[")
 							.Replace("]", "]" + SEP)
 							.Split(new[] { SEP }, StringSplitOptions.None)
@@ -92,8 +92,24 @@ namespace RenpyTranslate
 											   .Split(new[] { SEP }, StringSplitOptions.None)
 											   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
 											  );
-						result.Add(nextLine);
-						i++;
+
+						var nextVariables = nextLine
+							.Replace("[", SEP + "[")
+							.Replace("]", "]" + SEP)
+							.Split(new[] { SEP }, StringSplitOptions.None)
+							.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+							.Where(s => !string.IsNullOrEmpty(s))
+							.ToArray();
+
+						if (nextVariables.All(nv => correctCapitalization.Contains(nv)) && correctCapitalization.All(pv => nextVariables.Contains(pv)))
+						{
+							result.Add(nextLine);
+							i++;
+						}
+						else
+						{
+							File.AppendAllText("variable-errors.txt", filename + ": " + line + "\n" + filename + ": " + nextLine + "\n" + "\n");
+						}
 					}
 				}
 				else if (line.TrimStart().StartsWith("old") && line.EndsWith("\""))
@@ -130,8 +146,12 @@ namespace RenpyTranslate
 
 						nextLine = nextLine.Replace("\\ n", "\\n");
 						nextLine = nextLine.Replace("{/ ", "{/");
+						if (nextLine.Contains("{"))
+						{
+							nextLine = regex1.Replace(nextLine, match => match.Captures[0].Value.Replace(" ", "").ToLower());
+						}
 						const string SEP = "XXXXXXXXXXXXXXXXXXX";
-						var correctCapitalization = nextLine
+						var correctCapitalization = line
 							.Replace("[", SEP + "[")
 							.Replace("]", "]" + SEP)
 							.Split(new[] { SEP }, StringSplitOptions.None)
@@ -143,10 +163,26 @@ namespace RenpyTranslate
 											   .Replace("[", SEP + "[")
 											   .Replace("]", "]" + SEP)
 											   .Split(new[] { SEP }, StringSplitOptions.None)
-											   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
+											   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9]", "")) : s)
 											  );
-						result.Add(nextLine);
-						i++;
+
+						var nextVariables = nextLine
+							.Replace("[", SEP + "[")
+							.Replace("]", "]" + SEP)
+							.Split(new[] { SEP }, StringSplitOptions.None)
+							.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+							.Where(s => !string.IsNullOrEmpty(s))
+							.ToArray();
+
+						if (nextVariables.All(nv => correctCapitalization.Contains(nv)) && correctCapitalization.All(pv => nextVariables.Contains(pv)))
+						{
+							result.Add(nextLine);
+							i++;
+						}
+						else
+						{
+							File.AppendAllText("variable-errors.txt", filename + ": " + line + "\n" + filename + ": " + nextLine + "\n" + "\n");
+						}
 					}
 				}
 				else
