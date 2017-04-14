@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace RenpyTranslate
 {
@@ -73,7 +74,20 @@ namespace RenpyTranslate
 						if (nextLine.Contains("["))
 						{
 							const string SEP = "XXXXXXXXXXXXXXXXXXX";
-							nextLine = string.Join("", nextLine.Replace("[", SEP + "[").Replace("]", "]" + SEP).Split(new[] { SEP }, StringSplitOptions.None).Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s.ToLower().Replace(" ", "") : s));
+							var correctCapitalization = nextLine
+								.Replace("[", SEP + "[")
+								.Replace("]", "]" + SEP)
+								.Split(new[] { SEP }, StringSplitOptions.None)
+								.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+								.Where(s => !string.IsNullOrEmpty(s))
+								.ToArray();
+							nextLine = string.Join("",
+												   nextLine
+												   .Replace("[", SEP + "[")
+												   .Replace("]", "]" + SEP)
+												   .Split(new[] { SEP }, StringSplitOptions.None)
+												   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
+												  );
 							result.Add(nextLine);
 							i++;
 						}
@@ -109,6 +123,27 @@ namespace RenpyTranslate
 					else
 					{
 						result.Add(line);
+
+						if (nextLine.Contains("["))
+						{
+							const string SEP = "XXXXXXXXXXXXXXXXXXX";
+							var correctCapitalization = nextLine
+								.Replace("[", SEP + "[")
+								.Replace("]", "]" + SEP)
+								.Split(new[] { SEP }, StringSplitOptions.None)
+								.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+								.Where(s => !string.IsNullOrEmpty(s))
+								.ToArray();
+							nextLine = string.Join("",
+												   nextLine
+												   .Replace("[", SEP + "[")
+												   .Replace("]", "]" + SEP)
+												   .Split(new[] { SEP }, StringSplitOptions.None)
+												   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
+												  );
+							result.Add(nextLine);
+							i++;
+						}
 					}
 				}
 				else
@@ -134,6 +169,7 @@ namespace RenpyTranslate
 				english.Add(y[0].ToString());
 			}
 			var result = string.Join(" ", english);
+			result = result.Replace("\\ n", "\n");
 			result = result.Replace("preyakulyatom", "preejaculation");
 			result = result.Replace("\"", "\\\"");
 
