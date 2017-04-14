@@ -72,6 +72,11 @@ namespace RenpyTranslate
 						result.Add(line);
 
 						nextLine = nextLine.Replace("\\ n", "\\n");
+						nextLine = nextLine.Replace("{/ ", "{/");
+						if (nextLine.Contains("{"))
+						{
+							nextLine = regex1.Replace(nextLine, match => match.Captures[0].Value.Replace(" ", ""));
+						}
 						const string SEP = "XXXXXXXXXXXXXXXXXXX";
 						var correctCapitalization = nextLine
 							.Replace("[", SEP + "[")
@@ -124,6 +129,7 @@ namespace RenpyTranslate
 						result.Add(line);
 
 						nextLine = nextLine.Replace("\\ n", "\\n");
+						nextLine = nextLine.Replace("{/ ", "{/");
 						const string SEP = "XXXXXXXXXXXXXXXXXXX";
 						var correctCapitalization = nextLine
 							.Replace("[", SEP + "[")
@@ -152,6 +158,9 @@ namespace RenpyTranslate
 
 			return result;
 		}
+
+		static Regex regex1 = new Regex(@"{(.+?)}");
+
 
 		public static string TranslateString(string ru)
 		{
