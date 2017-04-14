@@ -71,26 +71,24 @@ namespace RenpyTranslate
 					{
 						result.Add(line);
 
-						if (nextLine.Contains("["))
-						{
-							const string SEP = "XXXXXXXXXXXXXXXXXXX";
-							var correctCapitalization = nextLine
-								.Replace("[", SEP + "[")
-								.Replace("]", "]" + SEP)
-								.Split(new[] { SEP }, StringSplitOptions.None)
-								.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
-								.Where(s => !string.IsNullOrEmpty(s))
-								.ToArray();
-							nextLine = string.Join("",
-												   nextLine
-												   .Replace("[", SEP + "[")
-												   .Replace("]", "]" + SEP)
-												   .Split(new[] { SEP }, StringSplitOptions.None)
-												   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
-												  );
-							result.Add(nextLine);
-							i++;
-						}
+						nextLine = nextLine.Replace("\\ n", "\\n");
+						const string SEP = "XXXXXXXXXXXXXXXXXXX";
+						var correctCapitalization = nextLine
+							.Replace("[", SEP + "[")
+							.Replace("]", "]" + SEP)
+							.Split(new[] { SEP }, StringSplitOptions.None)
+							.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+							.Where(s => !string.IsNullOrEmpty(s))
+							.ToArray();
+						nextLine = string.Join("",
+											   nextLine
+											   .Replace("[", SEP + "[")
+											   .Replace("]", "]" + SEP)
+											   .Split(new[] { SEP }, StringSplitOptions.None)
+											   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
+											  );
+						result.Add(nextLine);
+						i++;
 					}
 				}
 				else if (line.TrimStart().StartsWith("old") && line.EndsWith("\""))
@@ -122,28 +120,27 @@ namespace RenpyTranslate
 					}
 					else
 					{
+
 						result.Add(line);
 
-						if (nextLine.Contains("["))
-						{
-							const string SEP = "XXXXXXXXXXXXXXXXXXX";
-							var correctCapitalization = nextLine
-								.Replace("[", SEP + "[")
-								.Replace("]", "]" + SEP)
-								.Split(new[] { SEP }, StringSplitOptions.None)
-								.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
-								.Where(s => !string.IsNullOrEmpty(s))
-								.ToArray();
-							nextLine = string.Join("",
-												   nextLine
-												   .Replace("[", SEP + "[")
-												   .Replace("]", "]" + SEP)
-												   .Split(new[] { SEP }, StringSplitOptions.None)
-												   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
-												  );
-							result.Add(nextLine);
-							i++;
-						}
+						nextLine = nextLine.Replace("\\ n", "\\n");
+						const string SEP = "XXXXXXXXXXXXXXXXXXX";
+						var correctCapitalization = nextLine
+							.Replace("[", SEP + "[")
+							.Replace("]", "]" + SEP)
+							.Split(new[] { SEP }, StringSplitOptions.None)
+							.Select(s => s.StartsWith("[", StringComparison.Ordinal) ? s : null)
+							.Where(s => !string.IsNullOrEmpty(s))
+							.ToArray();
+						nextLine = string.Join("",
+											   nextLine
+											   .Replace("[", SEP + "[")
+											   .Replace("]", "]" + SEP)
+											   .Split(new[] { SEP }, StringSplitOptions.None)
+											   .Select(s => s.StartsWith("[", StringComparison.Ordinal) ? correctCapitalization.FirstOrDefault(s2 => Regex.Replace(s2.ToLower(), "[^A-Za-z0-9 _]", "") == Regex.Replace(s.ToLower(), "[^A-Za-z0-9 _]", "")) : s)
+											  );
+						result.Add(nextLine);
+						i++;
 					}
 				}
 				else
